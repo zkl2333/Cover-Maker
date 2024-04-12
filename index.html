@@ -4,10 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <style>
+      #frame-list {
+        margin: 20px 0;
+        display: flex;
+        overflow-y: auto;
+        gap: 4px;
+      }
+    </style>
   </head>
   <body>
     <div id="pixi-container"></div>
-    <div id="frame-list" style="display: block;"></div>
+    <div id="frame-list"></div>
     <!-- 引入PixiJS -->
     <script src="https://pixijs.download/release/pixi.js"></script>
     <!-- 引入gif.js库 -->
