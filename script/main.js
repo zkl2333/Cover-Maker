@@ -16,8 +16,8 @@ async function main() {
   app.stage.addChild(bg);
 
   // 创建动画精灵等初始化设置
-  await PIXI.Assets.load("/assets/bunny.png");
-  let sprite = PIXI.Sprite.from("/assets/bunny.png");
+  await PIXI.Assets.load("./assets/bunny.png");
+  let sprite = PIXI.Sprite.from("./assets/bunny.png");
   sprite.anchor.set(0.5);
   sprite.width = 100;
   sprite.height = 100;
@@ -29,7 +29,7 @@ async function main() {
   var gif = new GIF({
     workers: 2,
     quality: 10,
-    workerScript: "/script/gif.worker.js",
+    workerScript: "./script/gif.worker.js",
   });
 
   let frameCount = 0;
