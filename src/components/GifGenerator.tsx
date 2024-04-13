@@ -5,7 +5,7 @@ import GIF from "gif.js";
 interface GifGeneratorProps {
   width: number;
   height: number;
-  frames: HTMLImageElement[];
+  frames: Record<string, HTMLImageElement>;
   delay: number;
   onCompleted: (url: string) => void;
 }
@@ -21,8 +21,6 @@ export const GifGenerator = forwardRef(
   ) => {
     useImperativeHandle(ref, () => ({
       generate: () => {
-        console.log("generate");
-
         const gif = new GIF({
           workers: 4,
           quality: 10,
@@ -31,10 +29,16 @@ export const GifGenerator = forwardRef(
           workerScript: worker,
         });
 
-        frames.forEach((frame, index) => {
-          console.log("add frame", index, delay);
-          gif.addFrame(frame, { delay });
-        });
+        Object.keys(frames)
+          .map(Number)
+          .sort((a, b) => a - b)
+          .forEach((index) => {
+            const frame = frames[index];
+            if (frame) {
+              console.log("add frame", index, delay);
+              gif.addFrame(frames[index], { delay });
+            }
+          });
 
         gif.render();
 
