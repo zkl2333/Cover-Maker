@@ -1,27 +1,13 @@
-<!DOCTYPE html>
-<html lang="zh-hans">
+<!doctype html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style>
-      #frame-list {
-        margin: 20px 0;
-        display: flex;
-        overflow-y: auto;
-        gap: 4px;
-      }
-    </style>
+    <title>Vite + React + TS</title>
   </head>
   <body>
-    <div id="pixi-container"></div>
-    <div id="frame-list"></div>
-    <!-- 引入PixiJS -->
-    <script src="https://pixijs.download/release/pixi.js"></script>
-    <!-- 引入gif.js库 -->
-    <script src="./script/gif.js"></script>
-    <!-- 引入main.js -->
-    <script src="./script/main.js"></script>
-    <!-- 创建一个容器 -->
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
