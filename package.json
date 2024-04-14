@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.3.6",
+    "antd": "^5.16.1",
     "gif.js": "^0.2.0",
     "pixi-filters": "^6.0.2",
     "pixi.js": "^8.1.0",

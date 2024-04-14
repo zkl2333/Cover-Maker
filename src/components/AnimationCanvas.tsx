@@ -1,24 +1,17 @@
 import { useRef, useEffect, useImperativeHandle, forwardRef, ForwardedRef } from "react";
-import { Application, Assets } from "pixi.js";
-import displacement_map from "@/assets/displacement_map.png";
+import { Application } from "pixi.js";
 import { addBackground, addText } from "../utils";
+import { Empty } from "antd";
 
-async function preload() {
-  // 创建要加载的资产数据数组。
-  const assets = [
-    {
-      alias: "displacement",
-      src: displacement_map,
-    },
-  ];
-
-  // 加载上面定义的资源。
-  await Assets.load(assets);
-}
-
-interface AnimationCanvasProps {
+interface RunderProps {
   width: number;
   height: number;
+  colors: any;
+  title: any;
+  subTitle: any;
+}
+
+interface AnimationCanvasProps extends RunderProps {
   onFrame: (_currentFrame: number, frame: HTMLImageElement) => void;
   onCompleted: () => void;
 }
@@ -26,67 +19,50 @@ interface AnimationCanvasProps {
 export interface AnimationCanvasRef {
   start: () => void;
   stop: () => void;
+  reset: () => void;
+  capture: () => void;
 }
 
 const AnimationCanvas = forwardRef(function (
-  { width, height, onFrame, onCompleted }: AnimationCanvasProps,
+  { width, height, colors, title, subTitle, onFrame }: AnimationCanvasProps,
   ref: ForwardedRef<AnimationCanvasRef>
 ) {
   const DivRef = useRef<HTMLDivElement>(null);
   const appRef = useRef<Application | null>(null);
 
-  const setup = async () => {
-    if (!DivRef.current) return;
-    if (appRef.current) return;
-
+  const setup = async (div: HTMLDivElement, { width, height }: RunderProps) => {
+    console.log("setup");
+    appRef.current?.destroy();
     const app = new Application();
-    appRef.current = app;
-
     await app.init({
       antialias: true,
       width,
       height,
       useBackBuffer: true,
-      autoStart: false,
     });
-
-    DivRef.current.appendChild(app.canvas);
+    appRef.current = app;
+    // 清空容器
+    div.innerHTML = "";
+    div.appendChild(app.canvas);
+    return app;
   };
 
-  const render = async () => {
-    if (appRef.current) return;
-
-    await setup();
-    await preload();
-
-    const app = appRef.current!;
-    addBackground(app);
-    // addDisplacementEffect(app);
-    addText(app, "多吃点!");
-
-    const totleFrames = 60 * 1;
-    let currentFrame = 0;
-
-    app.ticker.add(async () => {
-      currentFrame += 1;
-      if (currentFrame > totleFrames) {
-        app.ticker.stop();
-        onCompleted();
-      } else {
-        const _currentFrame = currentFrame;
-        const image = await app.renderer.extract.image({
-          target: app.stage,
-          frame: app.screen,
-        });
-        console.log("currentFrame", _currentFrame);
-        onFrame(_currentFrame, image);
-      }
-    });
+  const render = async (runderProps: RunderProps) => {
+    if (!DivRef.current) return;
+    const app = await setup(DivRef.current, runderProps);
+    addBackground(app, colors);
+    addText(app, title, subTitle);
   };
 
   useEffect(() => {
-    render();
-  }, []);
+    render({
+      width,
+      height,
+      colors,
+      title,
+      subTitle,
+    });
+  }, [width, height, colors, title, subTitle]);
 
   useImperativeHandle(ref, () => ({
     start() {
@@ -101,9 +77,52 @@ const AnimationCanvas = forwardRef(function (
         appRef.current.ticker.stop();
       }
     },
+    reset() {
+      console.log("reset");
+      render({
+        width,
+        height,
+        colors,
+        title,
+        subTitle,
+      });
+    },
+    async capture() {
+      console.log("capture");
+
+      const totleFrames = 60 * 1;
+      let currentFrame = 0;
+
+      const app = appRef.current!;
+
+      app.ticker.add(async () => {
+        currentFrame += 1;
+        if (currentFrame > totleFrames) {
+          // app.ticker.stop();
+        } else {
+          const _currentFrame = currentFrame;
+          const image = await app.renderer.extract.image({
+            target: app.stage,
+            frame: app.screen,
+          });
+          onFrame(_currentFrame, image);
+        }
+      });
+    },
   }));
 
-  return <div ref={DivRef} />;
+  return (
+    <div
+      ref={DivRef}
+      className="flex justify-center items-center"
+      style={{
+        width: `${width}px`,
+        height: `${height}px`,
+      }}
+    >
+      <Empty />
+    </div>
+  );
 });
 
 export default AnimationCanvas;
