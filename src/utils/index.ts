@@ -4,7 +4,6 @@ import {
   Application,
   Container,
   Texture,
-  FillGradient,
   TextStyle,
   Text,
 } from "pixi.js";
